@@ -1,0 +1,24 @@
+{
+  "name": "emailservice",
+  "version": "1.0.0",
+  "description": "Backend Challenge",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "tsc && nodemon ./dist/index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.12.10",
+    "@types/typescript": "^2.0.0",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "nodemon": "^3.1.0",
+    "pg": "^8.11.5",
+    "sequelize": "^6.37.3",
+    "sequelize-typescript": "^2.1.6",
+    "typescript": "^5.4.5"
+  }
+}
