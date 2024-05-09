@@ -1,5 +1,5 @@
 import { EmailModel } from "../Database/database";
-import { IRepository } from "./IRepository";
+import { IRepository } from "./iRepository";
 
 class EmailRepository implements IRepository<EmailModel>{
     async create(model: EmailModel): Promise<void> {
