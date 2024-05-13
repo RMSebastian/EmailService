@@ -1,5 +1,5 @@
 import sgMail from '@sendgrid/mail'
-import { iStrategyPattern } from '../Pattern/iStrategyPattern';
+import { iStrategyPattern } from '../Patterns/iStrategyPattern';
 
 class sgEmailService implements iStrategyPattern{
     

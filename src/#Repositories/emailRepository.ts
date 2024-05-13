@@ -1,7 +1,6 @@
-import { EmailModel } from "../Database/database";
-import { IRepository } from "./iRepository";
+import { EmailModel } from "../Models/emailModel";
 
-class EmailRepository implements IRepository<EmailModel>{
+class EmailRepository{
     async create(model: EmailModel): Promise<void> {
         try{
             EmailModel.create({
@@ -51,3 +50,5 @@ class EmailRepository implements IRepository<EmailModel>{
     }
 
 }
+
+export default new EmailRepository();

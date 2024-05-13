@@ -1,6 +1,6 @@
 import FormData from 'form-data';
 import Mailgun from "mailgun.js";
-import { iStrategyPattern } from '../Pattern/iStrategyPattern';
+import { iStrategyPattern } from '../Patterns/iStrategyPattern';
 
 class mgEmailService implements iStrategyPattern{
     private mailgun: any | undefined;
@@ -15,6 +15,11 @@ class mgEmailService implements iStrategyPattern{
         }
     }
     async setAPI() {
+        try{
+
+        }catch(err){
+            console.log(err);
+        }
         this.mailgun = new Mailgun(FormData).client({
             username: 'api',
             key: process.env.MAILGUN_API_KEY as string,
