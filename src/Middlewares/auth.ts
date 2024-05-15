@@ -12,6 +12,6 @@ export async function validateToken(req: Request, res: Response, next: NextFunct
         jwt.verify(token, process.env.SECRET_JWT as string);
         next();
     }catch(err){
-        res.status(400).json({ message: "Acceso denegado. Token inválido." });
+        res.status(400).json({ message: "Acceso denegado. Token inválido.", token: token });
     }
 }

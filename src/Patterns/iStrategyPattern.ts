@@ -1,3 +1,3 @@
-export interface iStrategyPattern{
-    execute(): Promise<void>;
+export interface iStrategyPattern<T>{
+    execute(object: T): Promise<void>;
 }

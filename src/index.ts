@@ -1,6 +1,7 @@
 import express, { NextFunction, Request, Response, urlencoded } from "express";
 import { sequelize } from "./Databases/database";
 import authRouter from "./Routes/UserRoute";
+import emailRouter from "./Routes/emailRoute";
 
 
 const app = express();
@@ -23,6 +24,7 @@ app.listen(port,() =>{
 sequelize.sync();
 
 app.use("/api", authRouter);
+app.use("/api", emailRouter);
 
 
 // app.post("/auth",(req: Request, res: Response) =>{
