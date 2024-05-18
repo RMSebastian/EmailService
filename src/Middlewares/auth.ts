@@ -7,7 +7,6 @@ export async function validateToken(req: Request, res: Response, next: NextFunct
         return res.status(401).json({ message: "Acceso denegado. Token no proporcionado." });
     }
     const token = accessToken.split(" ")[1];
-
     try{
         jwt.verify(token, process.env.SECRET_JWT as string);
         next();

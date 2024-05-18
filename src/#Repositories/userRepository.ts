@@ -1,13 +1,16 @@
+
 import { UserModel } from "../Models/userModel";
 
 class UserRepository{
-    async create(model: UserModel): Promise<void> {
+    async create(model: UserModel): Promise<UserModel> {
         try{
-            UserModel.create({
+            const userCreated = await UserModel.create({
                 username: model.username,
                 password: model.password,
-                admin: model.admin
+                role: model.role
             });
+
+            return userCreated;
         }catch(err){
             throw new Error("📥❌ Save Error");
         }
@@ -20,6 +23,16 @@ class UserRepository{
         }catch(err){
             console.error(err);
             throw new Error("📤❌ Retrieve by name Error");
+        }
+    }
+    async retrieveByID(modelID: string): Promise<UserModel | null> {
+        try{
+            const searchedModel = await UserModel.findOne({where: {id: modelID}})
+            if(!searchedModel) return null;
+            return searchedModel;
+        }catch(err){
+            console.error(err);
+            throw new Error("📤❌ Retrieve by id Error");
         }
     }
 }

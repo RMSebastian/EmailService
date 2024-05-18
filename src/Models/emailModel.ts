@@ -2,6 +2,7 @@ import {DataTypes, Model, Sequelize} from "sequelize";
 
 export class EmailModel extends Model{
     public id!:number;
+    public senderId!:number;
     public sender!: string;
     public receiver!:string;
     public headline!:string;
@@ -14,6 +15,9 @@ export function initEmailModel(seq: Sequelize){
             type: DataTypes.INTEGER,
             primaryKey: true,
             autoIncrement: true,
+        },
+        senderId:{
+            type: DataTypes.INTEGER,
         },
         sender:{
             type: DataTypes.STRING

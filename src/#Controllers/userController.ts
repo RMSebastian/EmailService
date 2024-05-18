@@ -13,13 +13,13 @@ export async function singIn(req: Request, res: Response){
         if(!searchedUser || searchedUser.password != signUser.password){
             return res.status(400).json({ error: "Usuario o contraseña incorrecta" });
         }
-
-        signUser.admin = searchedUser.admin;
-
         const tokenPayload = {
-            username: signUser.username
+            id: String(searchedUser.id),
+            username: searchedUser.username,
+            role: searchedUser.role
+            
         };
-        const token = jwt.sign(tokenPayload,process.env.SECRET_JWT as string,{expiresIn: "20m"})
+        const token = jwt.sign(tokenPayload,process.env.SECRET_JWT as string,{expiresIn: "1h"})
 
         res.status(200).json({ message: "Usuario ingreso exitosamente", token: token });
 
@@ -34,19 +34,21 @@ export async function signUp(req: Request, res: Response){
         
         newUser.username = req.body.username;
         newUser.password = req.body.password;
-        newUser.admin = req.body.admin;
-    
-        //Check first if this guy already exists
+        newUser.role = req.body.role;
         const searchedUser = await userRepository.retrieveByName(newUser.username)
     
         if(searchedUser)return res.status(400).json({ error: "Usuario ya existe" });
     
-        const savedUser = await userRepository.create(newUser);
+        const userCreated = await userRepository.create(newUser);
     
+        await userRepository.retrieveByName
         const tokenPayload = {
-            username: newUser.username
+            id: String(userCreated.id),
+            username: userCreated.username,
+            role: userCreated.role
+            
         };
-        const token = jwt.sign(tokenPayload,process.env.SECRET_JWT as string,{expiresIn: "20m"})
+        const token = jwt.sign(tokenPayload,process.env.SECRET_JWT as string,{expiresIn: "1h"})
 
         res.status(200).json({ message: "Usuario creado exitosamente", token: token });
     }catch(err){

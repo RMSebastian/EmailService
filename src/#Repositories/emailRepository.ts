@@ -1,9 +1,11 @@
+import { sequelize } from "../Databases/database";
 import { EmailModel } from "../Models/emailModel";
 
 class EmailRepository{
     async create(model: EmailModel): Promise<void> {
         try{
             EmailModel.create({
+                senderId: model.senderId,
                 sender: model.sender,
                 receiver: model.receiver,
                 headline: model.headline,
@@ -40,6 +42,36 @@ class EmailRepository{
             throw new Error("📤❌ Retrieve by ID Error");
         }
     }
+    async retrieveCountEmails(idModel: number): Promise<number> {
+        try{
+            const query: string=
+            `
+            SELECT * FROM "Emails"
+            WHERE "senderId" = :senderId
+            AND "createdAt" >= :initDate
+            AND "createdAt" <= :endDate;
+          `;
+
+            const endDate: Date = new Date();
+
+            const initDate: Date = new Date();
+
+            initDate.setHours(0,0,0,0);
+
+            const calls: any[] = await sequelize.query(query, {
+                replacements: {
+                senderId: idModel,
+                initDate: initDate,
+                endDate: endDate
+                },
+                raw: true
+            });
+            return calls[0].length; //Return the arrays of emails, not the Results
+        }catch(error){
+            throw new Error("📤❌ Retrieve Count Error" + error);
+        }
+    }
+
     retrieveAll(): Promise<EmailModel[]> {
         try{
             const searchedModel = EmailModel.findAll();
