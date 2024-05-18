@@ -42,8 +42,15 @@ class EmailRepository{
             throw new Error("📤❌ Retrieve by ID Error");
         }
     }
-    async retrieveCountEmails(idModel: number): Promise<number> {
+    /**
+     * Look for the amount of emails sent in a day by a user 
+     * @param senderIdModel needs an email-IdSender for comparison
+     * @returns the amount of emails sent by the asked sender
+     */
+    async retrieveCountEmails(senderIdModel: number): Promise<number> {
         try{
+
+            //Creating the petition for sequelize
             const query: string=
             `
             SELECT * FROM "Emails"
@@ -52,23 +59,50 @@ class EmailRepository{
             AND "createdAt" <= :endDate;
           `;
 
+          //Set the actual and begin time of the currentDay (Realtime)
             const endDate: Date = new Date();
 
             const initDate: Date = new Date();
 
             initDate.setHours(0,0,0,0);
 
+            //Consults ORM with a query, retrieves results and metadata
             const calls: any[] = await sequelize.query(query, {
+                //replace the :"" with an actual value
                 replacements: {
-                senderId: idModel,
+                senderId: senderIdModel,
                 initDate: initDate,
                 endDate: endDate
                 },
+                //Return va non-map value, i just need the results lenght
                 raw: true
             });
-            return calls[0].length; //Return the arrays of emails, not the Results
+            return calls[0].length; //Return the arrays of emails, not the metadad
         }catch(error){
+
+            //Throw back an error in case of an error
             throw new Error("📤❌ Retrieve Count Error" + error);
+        }
+    }
+
+    retrieveUserEmail(senderIdModel: number): Promise<EmailModel[]> {
+        try{
+            const query=
+            `
+            SELECT * FROM "Emails"
+            WHERE "senderId" = :senderId
+            `;
+
+            const results: any = sequelize.query(query,{
+                replacements:{
+                    senderId: senderIdModel
+                }
+            })
+            const searchedEmails: Promise<EmailModel[]> = results[0]
+            
+            return searchedEmails;
+        }catch(err){
+            throw new Error("📭❌ Retrieve All Error");
         }
     }
 
