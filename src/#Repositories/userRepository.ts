@@ -25,14 +25,13 @@ class UserRepository{
             throw new Error("📤❌ Retrieve by name Error");
         }
     }
-    async retrieveByID(modelID: string): Promise<UserModel | null> {
+    
+    async retrieveAll(): Promise<UserModel[]> {
         try{
-            const searchedModel = await UserModel.findOne({where: {id: modelID}})
-            if(!searchedModel) return null;
+            const searchedModel = UserModel.findAll();
             return searchedModel;
         }catch(err){
-            console.error(err);
-            throw new Error("📤❌ Retrieve by id Error");
+            throw new Error("📭❌ Retrieve All Error");
         }
     }
 }

@@ -85,28 +85,7 @@ class EmailRepository{
         }
     }
 
-    retrieveUserEmail(senderIdModel: number): Promise<EmailModel[]> {
-        try{
-            const query=
-            `
-            SELECT * FROM "Emails"
-            WHERE "senderId" = :senderId
-            `;
-
-            const results: any = sequelize.query(query,{
-                replacements:{
-                    senderId: senderIdModel
-                }
-            })
-            const searchedEmails: Promise<EmailModel[]> = results[0]
-            
-            return searchedEmails;
-        }catch(err){
-            throw new Error("📭❌ Retrieve All Error");
-        }
-    }
-
-    retrieveAll(): Promise<EmailModel[]> {
+    async retrieveAll(): Promise<EmailModel[]> {
         try{
             const searchedModel = EmailModel.findAll();
             return searchedModel;
