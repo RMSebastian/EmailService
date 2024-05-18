@@ -1,9 +1,7 @@
 import { Request, Response } from "express";
-import mgEmailService from "../#Services/mgEmailService";
-import sgEmailService from "../#Services/sgEmailService";
 import { EmailModel } from "../Models/emailModel";
-import emailRepository from "../#Repositories/emailRepository";
 import { RetrievePayload } from "../Middlewares/payloadRetriever";
+import { EmailService } from "../#Services/emailService";
 
 export async function sendEmail(req: Request, res: Response) {
     
@@ -26,41 +24,13 @@ export async function sendEmail(req: Request, res: Response) {
     newEmail.headline =req.body.headline;
     newEmail.content =req.body.content;
     
-    const emailCount : number = await emailRepository.retrieveCountEmails(Number(decodedToken?.id));
-    
-    if(emailCount > 15){
-        res.status(401).json({message: "Enough messages for you pal"});
-        return;
-    }
-    
-    const functions: ((email: EmailModel) => Promise<void>)[]= [
-        (email: EmailModel) => mgEmailService.execute(email),
-        (email: EmailModel) => sgEmailService.execute(email),
-    ];
-
-    let flag: boolean = false;
-    
-    for (const emailFunction of functions) {
-        try {
-            await emailFunction(newEmail);
-
-            flag = !flag;
-
-            break;
-        } catch (error: any) {
-
-            console.error("Continuando con el siguiente servicio: ", error)
-            continue;
-        }
-    }
-    if(!flag){
-        res.status(500).json({message: "No fue posible enviar el email con ningun servicio"})
-    }else{
-        await emailRepository.create(newEmail).catch((error) =>{
-            console.log("Error Trying to save an email: ", error);
-        });
+    try{
+        await EmailService(newEmail);
 
         res.status(200).json({ message: "Email enviado exitosamente"});
+    }catch(error){
+        res.status(500).json({message: "Email Service Failure", error: error});
     }
     
+
 }

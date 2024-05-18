@@ -5,7 +5,7 @@ import { createEmailSchema } from "../Schemas/EmailSchema";
 import { sendEmail } from "../#Controllers/emailController";
 
 
-const emailRouter = Router();
+const emailRouter: Router = Router();
 
 emailRouter.post("/email", [validateToken,SchemaValidator(createEmailSchema)], sendEmail)
 
