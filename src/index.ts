@@ -5,8 +5,8 @@ import emailRouter from "./Routes/emailRoute";
 import statsRouter from "./Routes/statsRoute";
 
 
-const app = express();
-const port = 6000;
+const app: any = express();
+const port: number = 6000;
 
 app.use(express.json());
 

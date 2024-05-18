@@ -3,7 +3,7 @@ import { signUp, singIn } from "../#Controllers/userController";
 import SchemaValidator from "../Schemas/schemaValidator";
 import { createUserSchema, updateUserSchema } from "../Schemas/UserSchema";
 
-const userRouter = Router();
+const userRouter: Router = Router();
 
 userRouter.post("/signup",SchemaValidator(createUserSchema),signUp);
 

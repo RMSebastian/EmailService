@@ -4,22 +4,23 @@ import sgEmailService from "../#Services/sgEmailService";
 import { EmailModel } from "../Models/emailModel";
 import emailRepository from "../#Repositories/emailRepository";
 import { RetrievePayload } from "../Middlewares/payloadRetriever";
-import { number } from "zod";
 
 export async function sendEmail(req: Request, res: Response) {
-    const accessToken =req.header("authorization");
+    
+    const accessToken: string | undefined =req.header("authorization");
     
     if (!accessToken) {
         return res.status(401).json({ message: "Acceso denegado. Token no proporcionado." });
     }
 
-    const token = accessToken.split(" ")[1];
+    const token: string = accessToken.split(" ")[1];
     
-    const decodedToken = await RetrievePayload(token);
+    const decodedToken: {username: string, id:string, role: string} | null = await RetrievePayload(token);
 
     const newEmail: EmailModel = new EmailModel();
 
     newEmail.senderId = Number(decodedToken?.id);
+
     newEmail.sender =req.body.sender;
     newEmail.receiver =req.body.receiver;
     newEmail.headline =req.body.headline;
@@ -32,7 +33,7 @@ export async function sendEmail(req: Request, res: Response) {
         return;
     }
     
-    const functions = [
+    const functions: ((email: EmailModel) => Promise<void>)[]= [
         (email: EmailModel) => mgEmailService.execute(email),
         (email: EmailModel) => sgEmailService.execute(email),
     ];

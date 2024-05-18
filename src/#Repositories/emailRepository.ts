@@ -2,8 +2,10 @@ import { sequelize } from "../Databases/database";
 import { EmailModel } from "../Models/emailModel";
 
 class EmailRepository{
+
     async create(model: EmailModel): Promise<void> {
         try{
+
             EmailModel.create({
                 senderId: model.senderId,
                 sender: model.sender,
@@ -11,8 +13,11 @@ class EmailRepository{
                 headline: model.headline,
                 content: model.content,
             });
+
         }catch(err){
+
             throw new Error("📥❌ Save Error");
+
         }
     }
     /**
@@ -24,7 +29,7 @@ class EmailRepository{
         try{
 
             //Creating the petition for sequelize
-            const query: string=
+            const query: string =
             `
             SELECT * FROM "Emails"
             WHERE "senderId" = :senderId
@@ -34,9 +39,7 @@ class EmailRepository{
 
           //Set the actual and begin time of the currentDay (Realtime)
             const endDate: Date = new Date();
-
             const initDate: Date = new Date();
-
             initDate.setHours(0,0,0,0);
 
             //Consults ORM with a query, retrieves results and metadata
@@ -51,19 +54,25 @@ class EmailRepository{
                 raw: true
             });
             return calls[0].length; //Return the arrays of emails, not the metadad
+
         }catch(error){
 
             //Throw back an error in case of an error
             throw new Error("📤❌ Retrieve Count Error" + error);
+
         }
     }
 
     async retrieveAll(): Promise<EmailModel[]> {
         try{
-            const searchedModel = EmailModel.findAll();
+
+            const searchedModel: Promise<EmailModel[]> = EmailModel.findAll();
             return searchedModel;
+
         }catch(err){
+
             throw new Error("📭❌ Retrieve All Error");
+
         }
     }
 
