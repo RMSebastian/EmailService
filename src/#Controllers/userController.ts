@@ -1,9 +1,45 @@
-import { Request, Response } from "express";
+import {Router,  Request, Response } from "express";
 import { UserModel } from "../Models/userModel";
 import userRepository from "../#Repositories/userRepository";
 import jwt from "jsonwebtoken";
+import SchemaValidator from "../Schemas/schemaValidator";
+import { createUserSchema, updateUserSchema } from "../Schemas/UserSchema";
 
-export async function singIn(req: Request, res: Response){ 
+const userRouter: Router = Router();
+
+userRouter.post("/signup",SchemaValidator(createUserSchema),async (req: Request, res: Response)=>{
+    try{
+
+        const newUser: UserModel = new UserModel();
+        
+        newUser.username = newUser.SetUsername(req.body.username);
+        newUser.password = req.body.password;
+        newUser.role = req.body.role;
+
+        const searchedUser: UserModel | null = await userRepository.retrieveByName(newUser.username)
+    
+        if(searchedUser)return res.status(400).json({ error: "Usuario ya existe" });
+    
+        const userCreated: UserModel = await userRepository.create(newUser);
+
+        const tokenPayload: {id: string, username: string, role: string} = {
+            id: String(userCreated.id),
+            username: userCreated.username,
+            role: userCreated.role  
+        };
+
+        const token: string = jwt.sign(tokenPayload,process.env.SECRET_JWT as string,{expiresIn: "1h"})
+
+        res.status(200).json({ message: "Usuario creado exitosamente", token: token });
+
+    }catch(error){
+
+        console.error("Error en signUp:", error);
+        res.status(500).json({ message: "Error en signUp", error: error });
+    }
+});
+
+userRouter.post("/signin",SchemaValidator(updateUserSchema),async (req: Request, res: Response) => { 
     try{
         
         const signUser: UserModel = new UserModel();
@@ -31,40 +67,6 @@ export async function singIn(req: Request, res: Response){
         console.error("Error en signIn:", err);
         res.status(500).json({ error: "Error en signIn" });
     }
-}
+})
 
-export async function signUp(req: Request, res: Response){
-    try{
-
-        const newUser: UserModel = new UserModel();
-        
-        newUser.username = req.body.username;
-        newUser.password = req.body.password;
-        newUser.role = req.body.role;
-
-        const searchedUser: UserModel | null = await userRepository.retrieveByName(newUser.username)
-    
-        if(searchedUser)return res.status(400).json({ error: "Usuario ya existe" });
-    
-        const userCreated: UserModel = await userRepository.create(newUser);
-
-        const tokenPayload: {id: string, username: string, role: string} = {
-            id: String(userCreated.id),
-            username: userCreated.username,
-            role: userCreated.role  
-        };
-
-        const token: string = jwt.sign(tokenPayload,process.env.SECRET_JWT as string,{expiresIn: "1h"})
-
-        res.status(200).json({ message: "Usuario creado exitosamente", token: token });
-
-    }catch(err){
-
-        console.error("Error en signUp:", err);
-        res.status(500).json({ error: "Error en signUp" });
-    }
-
-    
-
-
-}
+export default userRouter;

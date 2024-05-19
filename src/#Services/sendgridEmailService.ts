@@ -1,8 +1,8 @@
 import sgMail from '@sendgrid/mail'
-import { iStrategyPattern } from '../Patterns/iStrategyPattern';
+import { IEmailSender } from './Interfaces/IEmailSender';
 import { EmailModel } from '../Models/emailModel';
 
-class sgEmailService implements iStrategyPattern<EmailModel>{
+class sgEmailService implements IEmailSender<EmailModel>{
     private sendgrid: any | undefined;
     constructor(){
         this.setAPI();
@@ -12,16 +12,14 @@ class sgEmailService implements iStrategyPattern<EmailModel>{
             if (!this.sendgrid) {
                 throw new Error('Sendgrid client is not initialized');
             }
-            // const msg = {
-            //     from: 'maurosebaromero@hotmail.com', //Needs to be this email the sender
-            //     to: email.receiver as string,
-            //     subject: `${email.headline as string} - ${email.sender as string}`,
-            //     text: email.content as string,
-            // };
+            const msg = {
+                from: 'maurosebaromero@hotmail.com', //Needs to be this email the sender
+                to: email.receiver as string,
+                subject: `${email.headline as string} - ${email.sender as string}`,
+                text: email.content as string,
+            };
 
-            // await sgMail.send(msg);
-
-            console.log("Mensaje Enviado");
+            await sgMail.send(msg);
         } catch (error) {
             console.error('Error al enviar el correo electrónico:', error);
 

@@ -1,7 +1,8 @@
 
 import { UserModel } from "../Models/userModel";
+import { IUserRepository } from "./Interfaces/IUserRepository";
 
-class UserRepository{
+class SequelizeUserRepository implements IUserRepository{
     async create(model: UserModel): Promise<UserModel> {
         try{
             const userCreated: UserModel = await UserModel.create({
@@ -36,4 +37,4 @@ class UserRepository{
     }
 }
 
-export default new UserRepository();
+export default new SequelizeUserRepository();

@@ -1,7 +1,8 @@
 import { sequelize } from "../Databases/database";
 import { EmailModel } from "../Models/emailModel";
+import { IEmailRepository } from "./Interfaces/IEmailRepository";
 
-class EmailRepository{
+class SequelizeEmailRepository implements IEmailRepository{
 
     async create(model: EmailModel): Promise<void> {
         try{
@@ -78,4 +79,4 @@ class EmailRepository{
 
 }
 
-export default new EmailRepository();
+export default new SequelizeEmailRepository();

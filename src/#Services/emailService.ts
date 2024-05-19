@@ -1,46 +1,54 @@
+import { IEmailRepository } from "../#Repositories/Interfaces/IEmailRepository";
 import emailRepository from "../#Repositories/emailRepository";
-import mgEmailService from "../#Services/mailgunEmailService";
-import sgEmailService from "../#Services/sendgridEmailService";
 import { EmailModel } from "../Models/emailModel";
-
-export async function EmailService(emailModel: EmailModel) {
-    try{
-        const emailCount : number = await emailRepository.retrieveCountEmails(Number(emailModel?.id));
+import { IEmailSender } from "./Interfaces/IEmailSender";
+import { IEmailService } from "./Interfaces/IEmailService";
+import * as constantData from "../Utils/constantData";
+export class EmailService implements IEmailService{
+    private emailRepository: IEmailRepository;
+    private emailSenders: IEmailSender<EmailModel>[];
+    private email: EmailModel;
     
-        if(emailCount > 15){
-            throw new Error("Enough messages for you pal");
-        }
-        
-        const functions: ((email: EmailModel) => Promise<void>)[]= [
-            (email: EmailModel) => mgEmailService.execute(email),
-            (email: EmailModel) => sgEmailService.execute(email),
-        ];
-    
-        let flag: boolean = false;
-        
-        for (const emailFunction of functions) {
-            try {
-                await emailFunction(emailModel);
-    
-                flag = !flag;
-    
-                break;
-            } catch (error: any) {
-    
-                console.error("Continuando con el siguiente servicio: ", error)
-                continue;
-            }
-        }
-        if(!flag){
-            throw new Error("Non-EmailService currently on service")
-        }else{
-            await emailRepository.create(emailModel).catch((error) =>{
-                console.log("Error Trying to save an email: ", error);
-            });            
-        }
-    }catch(error){
-        throw error;
+    constructor(email: EmailModel,emailRepository: IEmailRepository,emailSenders: IEmailSender<EmailModel>[] ){
+        this.emailRepository = emailRepository;
+        this.emailSenders = emailSenders;
+        this.email = email
     }
-    
-    
+    async sendEmail() {
+        try{
+            const emailCount : number = await this.emailRepository.retrieveCountEmails(Number(this.email?.senderId));
+            
+            //Utils clase constants exportar constantes amountPerDay = 15;
+            if(emailCount > constantData.emailAmountPerUser){
+                throw new Error("Enough messages for you pal");
+            }
+            
+            let flag: boolean = false;
+            
+            for (const emailFunction of this.emailSenders) {
+                try {
+                    await emailFunction.execute(this.email)
+        
+                    flag = !flag;
+        
+                    break;
+                } catch (error: any) {
+        
+                    console.error("Continuando con el siguiente servicio: ", error)
+                    continue;
+                }
+            }
+            if(flag){
+
+                await emailRepository.create(this.email); 
+                
+            }else{
+
+                throw new Error("Non-EmailService currently on service")          
+            }
+        }catch(error){
+            throw error;
+        }
+    }
+
 }

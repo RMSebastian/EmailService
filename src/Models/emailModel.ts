@@ -1,4 +1,5 @@
 import {DataTypes, Model, Sequelize} from "sequelize";
+import { validateEmail } from "../Utils/emailVerifier";
 
 export class EmailModel extends Model{
     public id!:number;
@@ -7,6 +8,21 @@ export class EmailModel extends Model{
     public receiver!:string;
     public headline!:string;
     public content!:string;
+
+    SetReceiver(receiver:string): string {
+        try{
+            return validateEmail(receiver);
+        }catch(error){
+            throw error;
+        }   
+    }
+    SetSender(sender:string): string {
+        try{
+            return validateEmail(sender);
+        }catch(error){
+            throw error;
+        }   
+    }
 }
 export function initEmailModel(seq: Sequelize){
     const sequelize = seq;

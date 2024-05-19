@@ -1,38 +1,25 @@
-import { Request, Response } from "express";
-import emailRepository from "../#Repositories/emailRepository";
+import { Request, Response, Router } from "express";
+import { validateToken } from "../Middlewares/authToken";
+import { GetStats, StatsService } from "../#Services/statsService";
+import { validateRole } from "../Middlewares/authRole";
 import userRepository from "../#Repositories/userRepository";
-import { UserModel } from "../Models/userModel";
 
-export async function GetStats(req: Request, res:Response) {
-    try{
-        // Conseguir todos los users find.all
-        const userModels: UserModel[] = await userRepository.retrieveAll();
+const statsRouter: Router = Router();
 
-        if(!userModels || userModels.length == 0){
-            res.status(404).json({message: "❌ ERROR, Users dont exist or found"})
-        }
+statsRouter.get("/stats",[validateToken, validateRole],GetStats);
 
-        //por cada user, llamar al repo y conseguir cuantos emails llamaron
-        //no use userModels.ForEach porque no soporta asyncronidad
 
-        let data: {name: string, amount: number}[] = [];
+statsRouter.get("/stats",[validateToken, validateRole],async (req: Request, res: Response)=>{
+try{
 
-        for(const user of userModels){
-            const emailsSent: number = await emailRepository.retrieveCountEmails(user.id);
+    const statsService: StatsService = new StatsService(userRepository)
 
-            if(emailsSent > 0){
-                data.push({
-                    name: user.username,
-                    amount: emailsSent
-                });
+    const data: {name: string, amount: number}[] = await statsService.GetStats();
 
-            }else{
-                continue;
-            }
-        }
-
-        res.status(200).send(data);
-    }catch(error){
-        res.status(500).json({message: "Error on stats controller"})
-    }
+    res.status(200).send(data);
+}catch(error){
+    res.status(500).json({message: "Error on stats service", error: error})
 }
+});
+
+export default statsRouter;

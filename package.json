@@ -15,6 +15,8 @@
     "@types/jest": "^29.5.12",
     "@types/jsonwebtoken": "^9.0.6",
     "@types/node": "^20.12.10",
+    "@types/swagger-jsdoc": "^6.0.4",
+    "@types/swagger-ui-express": "^4.1.6",
     "@types/typescript": "^2.0.0",
     "data": "^0.6.1",
     "dotenv": "^16.4.5",
@@ -27,16 +29,18 @@
     "pg": "^8.11.5",
     "sequelize": "^6.37.3",
     "sequelize-typescript": "^2.1.6",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.0",
     "ts-jest": "^29.1.2",
     "ts-node": "^10.9.2",
     "typescript": "^5.4.5",
     "zod": "^3.23.8"
   },
-  "jest":{
+  "jest": {
     "preset": "ts-jest",
-    "testEnviroment": "node",
-    "CollectCoverage": true,
-    "coveragePathIgnorePatterns":[
+    "testEnvironment": "node",
+    "collectCoverage": true,
+    "coveragePathIgnorePatterns": [
       "/node_modules/",
       "/test/",
       "/dist/"

@@ -1,3 +1,3 @@
-export interface iStrategyPattern<T>{
+export interface IEmailSender<T>{
     execute(object: T): Promise<void>;
 }
