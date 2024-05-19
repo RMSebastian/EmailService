@@ -9,19 +9,23 @@ export class EmailModel extends Model{
     public headline!:string;
     public content!:string;
 
-    SetReceiver(receiver:string): string {
+    SetReceiver(receiver:string) {
         try{
-            return validateEmail(receiver);
-        }catch(error){
-            throw error;
-        }   
+            const verified = validateEmail(receiver);
+            this.receiver = verified;
+        }catch(error)
+        {
+            throw error
+        }
     }
-    SetSender(sender:string): string {
+    SetSender(sender:string) {
         try{
-            return validateEmail(sender);
-        }catch(error){
-            throw error;
-        }   
+            const verified = validateEmail(sender);
+            this.receiver = verified;
+        }catch(error)
+        {
+            throw error
+        } 
     }
 }
 export function initEmailModel(seq: Sequelize){

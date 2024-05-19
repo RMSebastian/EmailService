@@ -1,9 +1,10 @@
 import {Router,  Request, Response } from "express";
 import { UserModel } from "../Models/userModel";
 import userRepository from "../#Repositories/userRepository";
-import jwt from "jsonwebtoken";
 import SchemaValidator from "../Schemas/schemaValidator";
 import { createUserSchema, updateUserSchema } from "../Schemas/UserSchema";
+import { IUserService } from "../#Services/Interfaces/IUserService";
+import { UserService } from "../#Services/userService";
 
 const userRouter: Router = Router();
 
@@ -12,23 +13,13 @@ userRouter.post("/signup",SchemaValidator(createUserSchema),async (req: Request,
 
         const newUser: UserModel = new UserModel();
         
-        newUser.username = newUser.SetUsername(req.body.username);
+        newUser.SetUsername(req.body.username);
         newUser.password = req.body.password;
         newUser.role = req.body.role;
 
-        const searchedUser: UserModel | null = await userRepository.retrieveByName(newUser.username)
-    
-        if(searchedUser)return res.status(400).json({ error: "Usuario ya existe" });
-    
-        const userCreated: UserModel = await userRepository.create(newUser);
+        const userService: IUserService = new UserService(newUser,userRepository)
 
-        const tokenPayload: {id: string, username: string, role: string} = {
-            id: String(userCreated.id),
-            username: userCreated.username,
-            role: userCreated.role  
-        };
-
-        const token: string = jwt.sign(tokenPayload,process.env.SECRET_JWT as string,{expiresIn: "1h"})
+        const token: string = await userService.signUp();
 
         res.status(200).json({ message: "Usuario creado exitosamente", token: token });
 
@@ -44,23 +35,13 @@ userRouter.post("/signin",SchemaValidator(updateUserSchema),async (req: Request,
         
         const signUser: UserModel = new UserModel();
 
-        signUser.username = req.body.username;
+        signUser.SetUsername(req.body.username);
         signUser.password = req.body.password;
 
-        const searchedUser: UserModel | null = await userRepository.retrieveByName(signUser.username)
+        const userService: IUserService = new UserService(signUser,userRepository)
+
+        const token: string = await userService.signIn();
     
-        if(!searchedUser || searchedUser.password != signUser.password){
-            return res.status(400).json({ error: "Usuario o contraseña incorrecta" });
-        }
-
-        const tokenPayload: {id: string, username: string, role: string} = {
-            id: String(searchedUser.id),
-            username: searchedUser.username,
-            role: searchedUser.role  
-        };
-
-        const token: string = jwt.sign(tokenPayload,process.env.SECRET_JWT as string,{expiresIn: "1h"})
-
         res.status(200).json({ message: "Usuario ingreso exitosamente", token: token });
 
     }catch(err){

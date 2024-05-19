@@ -6,7 +6,9 @@ import { RetrievePayload } from "../Middlewares/payloadRetriever";
 import { EmailModel } from "../Models/emailModel";
 import { EmailService } from "../#Services/emailService";
 import emailRepository from "../#Repositories/emailRepository";
-import * as constantData from "../Utils/constantData";
+import { IEmailService } from "../#Services/Interfaces/IEmailService";
+import mailgunEmailService from "../#Services/mailgunEmailService";
+import sendgridEmailService from "../#Services/sendgridEmailService";
 
 const emailRouter: Router = Router();
 /**
@@ -88,11 +90,11 @@ emailRouter.post("/email", [validateToken,SchemaValidator(createEmailSchema)], a
     newEmail.senderId = Number(decodedToken.id);
     newEmail.headline =req.body.headline as string;
     newEmail.content =req.body.content as string;
-    newEmail.sender = newEmail.SetSender(decodedToken.username);
-    newEmail.receiver = newEmail.SetReceiver(req.body.receiver);
+    newEmail.SetSender(decodedToken.username);
+    newEmail.SetReceiver(req.body.receiver);
 
     try{
-        const emailService: EmailService = new EmailService(newEmail,emailRepository,constantData.emailSenders);
+        const emailService: IEmailService = new EmailService(newEmail,emailRepository,[mailgunEmailService, sendgridEmailService]);
 
         await emailService.sendEmail();
 

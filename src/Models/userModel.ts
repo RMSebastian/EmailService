@@ -7,12 +7,14 @@ export class UserModel extends Model{
     public password!: string;
     public role!: Role;
 
-    SetUsername(username:string): string {
+    SetUsername(username:string) {
         try{
-            return validateEmail(username)
-        }catch(error){
-            throw error;
-        }   
+            const verified = validateEmail(username);
+            this.username = verified;
+        }catch(error)
+        {
+            throw error
+        } 
     }
 }
 export function InitUserModel(seq: Sequelize){

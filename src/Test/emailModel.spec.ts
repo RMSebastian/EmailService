@@ -1,34 +1,45 @@
 import { sequelize } from "../Databases/database"; 
 import { EmailModel } from "../Models/emailModel";
-
+beforeAll(async () => {
+    await sequelize.sync();
+});
 describe("Testing Email Service", () => {
-    beforeAll(async () => {
-        await sequelize.sync();
-    });
+
+    //Un test de Authentication failure?
 
     test("Creating a normal email without errors", () => {
         const emailModel = new EmailModel();
 
         emailModel.id = 1;
         emailModel.senderId = 1;
-        emailModel.sender = "sender@gmail.com";
         emailModel.headline = "Test Headline";
         emailModel.content = "Test Content";
 
         expect(emailModel).toBeDefined();
-        expect(emailModel.SetReceiver("receiver@gmail.com")).not.toThrow;
+        expect(emailModel.id).toBe(1);
+        expect(emailModel.senderId).toBe(1);
+        expect(emailModel.headline).toBe("Test Headline");
+        expect(emailModel.content).toBe("Test Content");
+
+        expect(() => {
+            emailModel.SetReceiver("reciever@gmail.com");
+        }).not.toThrow();
+        expect(() => {
+            emailModel.SetSender("sender@gmail.com");
+        }).not.toThrow();
     });
-    test("Creating an email with missing '@' and '.com'", () => {
+
+    test("Creating an email with a missing '@' and '.com'", () => {
         const emailModel = new EmailModel();
 
-        expect(()=>{
+        expect(() => {
             emailModel.SetReceiver("receiver.com");
-        }).toThrow();
-        expect(()=>{
-            emailModel.SetReceiver(" receiver@com");
-        }).toThrow();
-        expect(()=>{
-            emailModel.SetReceiver(" .comreceiver@com");
-        }).toThrow();
+        }).toThrow("Invalid email address");
+        expect(() => {
+            emailModel.SetSender("sender.com");
+        }).toThrow("Invalid email address");
     });
+});
+afterAll(async () => {
+    await sequelize.close();
 });

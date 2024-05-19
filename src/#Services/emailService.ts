@@ -1,5 +1,4 @@
 import { IEmailRepository } from "../#Repositories/Interfaces/IEmailRepository";
-import emailRepository from "../#Repositories/emailRepository";
 import { EmailModel } from "../Models/emailModel";
 import { IEmailSender } from "./Interfaces/IEmailSender";
 import { IEmailService } from "./Interfaces/IEmailService";
@@ -33,14 +32,13 @@ export class EmailService implements IEmailService{
         
                     break;
                 } catch (error: any) {
-        
-                    console.error("Continuando con el siguiente servicio: ", error)
+                    
                     continue;
                 }
             }
             if(flag){
 
-                await emailRepository.create(this.email); 
+                await this.emailRepository.create(this.email); 
                 
             }else{
 
