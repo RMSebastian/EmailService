@@ -5,7 +5,6 @@ beforeAll(async () => {
 });
 describe("Testing Email Service", () => {
 
-    //Un test de Authentication failure?
 
     test("Creating a normal email without errors", () => {
         const emailModel = new EmailModel();
@@ -32,6 +31,7 @@ describe("Testing Email Service", () => {
     test("Creating an email with a missing '@' and '.com'", () => {
         const emailModel = new EmailModel();
 
+        //No Try-catch functions are they
         expect(() => {
             emailModel.SetReceiver("receiver.com");
         }).toThrow("Invalid email address");
