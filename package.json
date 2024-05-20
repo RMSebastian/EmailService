@@ -4,7 +4,7 @@
   "description": "Backend Challenge",
   "main": "index.js",
   "scripts": {
-    "test": "jest --watchAll --detectOpenHandles",
+    "test": "jest",
     "start": "tsc && nodemon ./src/index.ts"
   },
   "author": "",
