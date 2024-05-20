@@ -24,16 +24,29 @@ jobs:
           POSTGRES_PASSWORD: testpassword
 
     steps:
-    - uses: actions/checkout@v2
-    - name: Use Node.js
-      uses: actions/setup-node@v2
-      with:
-        node-version: '14'
-    - run: npm install
-    - run: npm test
-      env:
-        POSTGRES_DATABASE: testdb
-        POSTGRES_USERNAME: testuser
-        POSTGRES_PASSWORD: testpassword
-        POSTGRES_HOST: localhost
-        POSTGRES_PORT: 5432
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Use Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Wait for PostgreSQL
+        run: |
+          until pg_isready -h localhost -p 5432; do
+            echo "Waiting for PostgreSQL to be ready..."
+            sleep 1
+          done
+
+      - name: Run tests
+        env:
+          POSTGRES_DATABASE: testdb
+          POSTGRES_USERNAME: testuser
+          POSTGRES_PASSWORD: testpassword
+          POSTGRES_HOST: localhost
+          POSTGRES_PORT: 5432
+        run: npm test
