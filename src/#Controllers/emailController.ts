@@ -11,65 +11,7 @@ import mailgunEmailService from "../#Services/mailgunEmailService";
 import sendgridEmailService from "../#Services/sendgridEmailService";
 
 const emailRouter: Router = Router();
-/**
- * @openapi
- * /email:
- *   post:
- *     summary: Envía un correo electrónico
- *     requestBody:
- *       required: false
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               sender:
- *                 type: string
- *                 description: Quien envia el correo
- *               receiver:
- *                  type: string
- *                  description: Direccion de correo destinatario
- *               headline:
- *                 type: string
- *                 description: Asunto del correo electrónico
- *               content:
- *                 type: string
- *                 description: Cuerpo del correo electrónico
- *     responses:
- *       200:
- *         description: Correo electrónico enviado exitosamente
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   description: Mensaje indicando que el correo electrónico se envió correctamente
- *                   example: Correo electrónico enviado exitosamente
- *       400:
- *         description: Solicitud incorrecta. El cuerpo de la solicitud es inválido.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 error:
- *                   type: string
- *                   description: Mensaje de error que describe el problema con la solicitud
- *                   example: Se proporcionó una dirección de correo electrónico inválida
- *       500:
- *         description: Error interno del servidor. Algo salió mal en el lado del servidor.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 error:
- *                   type: string
- *                   description: Mensaje de error que indica un error inesperado en el lado del servidor
- *                   example: Error interno del servidor
- */
+
 emailRouter.post("/email", [validateToken,SchemaValidator(createEmailSchema)], async (req: Request, res: Response)=>{
     
     const accessToken: string | undefined =req.header("authorization");
