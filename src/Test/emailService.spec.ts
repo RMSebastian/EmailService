@@ -56,7 +56,7 @@ describe("Testing Email Service", () => {
 
     test("Send email throws error when email count exceeds limit", async () => {
         
-        mockEmailRepository.retrieveCountEmails.mockResolvedValue(20); 
+        mockEmailRepository.retrieveCountEmails.mockResolvedValue(10001); 
 
         await expect(emailService.sendEmail()).rejects.toThrow("Enough messages for you pal");
 
