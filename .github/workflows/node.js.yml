@@ -49,4 +49,5 @@ jobs:
           POSTGRES_PASSWORD: testpassword
           POSTGRES_HOST: localhost
           POSTGRES_PORT: 5432
+          SECRET_JWT: webTesting
         run: npm test
